@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Add benefit type selector (Rawat Inap/Rawat Jalan/Rawat Gigi), add Rawat Jalan and Rawat Gigi premium data, and change download buttons from 'Tabel Premi' to 'Brosur MIUHC' with correct URLs.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Step 1: Add new data objects to Index.html. Read the JSON files and embed them as JavaScript constants: (a) DATA_KONV_RJ from /projects/sandbox/Project_miuhc/konv_rj_data.json - 15 values per age, ages 0-79 only for PRIA and WANITA. (b) DATA_SYARIAH_RJ from /projects/sandbox/Project_miuhc/syariah_rj_data.json - 13 values per age, ages 0-79 only. (c) DATA_SYARIAH_GIGI from /projects/sandbox/Project_miuhc/syariah_gigi_data.json - 13 values per age, ages 0-79 only. Place these constants right after DATA_SYARIAH in the script section.",
     "Step 2: Add a benefit type selector UI. Add a new control group in the .controls div with a <select> element with id='benefitType' and onchange='calculate()'. Options: 'rawat_inap' (label: 'Manfaat Perawatan Rumah Sakit'), 'rawat_jalan' (label: 'Manfaat Rawat Jalan'), 'rawat_gigi' (label: 'Manfaat Perawatan Gigi'). The 'rawat_gigi' option should only be shown/enabled when the syariah tab is active (not available for konvensional).",
@@ -27,5 +27,5 @@
     "Run: python3 -c \"import re; html=open('/projects/sandbox/Project_miuhc/Index.html').read(); assert 'benefitType' in html; assert 'rawat_jalan' in html; assert 'rawat_gigi' in html; assert 'DATA_KONV_RJ' in html; assert 'DATA_SYARIAH_GIGI' in html; print('Benefit selector OK')\""
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All verification tests pass. JSON data embedded successfully with correct values. DATA_SYARIAH PRIA age 45 Topaz=18594700 and Topaz ID=15576400 unchanged. Benefit selector works with switchTab logic to hide/disable rawat_gigi for konvensional. Ages 80+ show appropriate message for RJ/GIGI."
 }
