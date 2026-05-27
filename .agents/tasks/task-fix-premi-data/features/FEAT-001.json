@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "fix",
   "description": "Update premium data in Index.html to include all plans from PDF sources and add PDF download buttons. The Konvensional PDF has 15 plans (8 non-smart + 7 smart including Topaz ID Smart and Jade ID Smart), while the current HTML only has 13 (missing Topaz ID Smart and Jade ID Smart). The Syariah PDF correctly has 13 plans. Also add download buttons for both PDF files.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Step 1: Update DATA_KONV in Index.html. Read /projects/sandbox/Project_miuhc/konv_15plan_data.json which contains the full 15-plan-per-age data extracted from the Konvensional PDF. Replace the existing DATA_KONV JavaScript object in Index.html (line 501) with this new 15-value array data. Plan order per age array: [Diamond(0), Ruby(1), Emerald(2), Topaz(3), Topaz ID(4), Jade(5), Jade ID(6), Sapphire(7), Diamond Smart(8), Ruby Smart(9), Emerald Smart(10), Topaz Smart(11), Topaz ID Smart(12), Jade Smart(13), Jade ID Smart(14)].",
     "Step 2: Keep DATA_SYARIAH as-is. Read /projects/sandbox/Project_miuhc/syariah_13plan_data.json to verify. The Syariah data correctly has 13 plans per age (8 non-smart + 5 smart). No changes needed. Plan order: [Diamond(0), Ruby(1), Emerald(2), Topaz(3), Topaz ID(4), Jade(5), Jade ID(6), Sapphire(7), Diamond Smart(8), Ruby Smart(9), Emerald Smart(10), Topaz Smart(11), Jade Smart(12)].",
@@ -27,5 +27,5 @@
     "Run basic JSON validation on the DATA_KONV and DATA_SYARIAH objects to confirm they parse correctly"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All changes applied to Index.html. DATA_KONV updated to 15 values per age matching konv_15plan_data.json. DATA_SYARIAH unchanged with 13 values. calculate() now conditionally renders 4 hemat plans for konvensional (Jade ID Smart idx 14, Jade Smart idx 13, Topaz ID Smart idx 12, Topaz Smart idx 11) and 2 for syariah (Jade Smart idx 12, Topaz Smart idx 11). PDF download buttons added between info-box and footer."
 }
