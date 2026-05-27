@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Update premium data in Index.html to include all plans from PDF sources and add PDF download buttons. The Konvensional PDF has 15 plans (8 non-smart + 7 smart including Topaz ID Smart and Jade ID Smart), while the current HTML only has 13 (missing Topaz ID Smart and Jade ID Smart). The Syariah PDF correctly has 13 plans. Also add download buttons for both PDF files.",
+  "status": "completed",
+  "steps": [
+    "Step 1: Update DATA_KONV in Index.html. Read /projects/sandbox/Project_miuhc/konv_15plan_data.json which contains the full 15-plan-per-age data extracted from the Konvensional PDF. Replace the existing DATA_KONV JavaScript object in Index.html (line 501) with this new 15-value array data. Plan order per age array: [Diamond(0), Ruby(1), Emerald(2), Topaz(3), Topaz ID(4), Jade(5), Jade ID(6), Sapphire(7), Diamond Smart(8), Ruby Smart(9), Emerald Smart(10), Topaz Smart(11), Topaz ID Smart(12), Jade Smart(13), Jade ID Smart(14)].",
+    "Step 2: Keep DATA_SYARIAH as-is. Read /projects/sandbox/Project_miuhc/syariah_13plan_data.json to verify. The Syariah data correctly has 13 plans per age (8 non-smart + 5 smart). No changes needed. Plan order: [Diamond(0), Ruby(1), Emerald(2), Topaz(3), Topaz ID(4), Jade(5), Jade ID(6), Sapphire(7), Diamond Smart(8), Ruby Smart(9), Emerald Smart(10), Topaz Smart(11), Jade Smart(12)].",
+    "Step 3: Update the PLAN_NAMES array to include the 2 new plans: change from 13 to 15 entries by adding 'Topaz ID Smart' at index 12 and 'Jade ID Smart' at index 14. New array: ['Diamond','Ruby','Emerald','Topaz','Topaz ID','Jade','Jade ID','Sapphire','Diamond Smart','Ruby Smart','Emerald Smart','Topaz Smart','Topaz ID Smart','Jade Smart','Jade ID Smart'].",
+    "Step 4: Update the PLAN_DETAILS object to add entries for the 2 new plans. 'Topaz ID Smart' should have: wilayah='Indonesia', kamar='1 Bed', limit='18 M', deductible='Rp8.000.000'. 'Jade ID Smart' should have: wilayah='Indonesia', kamar='2 Bed', limit='10 M', deductible='Rp5.000.000'.",
+    "Step 5: Update the calculate() function to handle the different array lengths between Konvensional (15 plans) and Syariah (13 plans). The plan index mapping differs: For Konvensional, Topaz ID Smart is at index 12, Jade Smart at 13, Jade ID Smart at 14. For Syariah, Jade Smart remains at index 12 (no Topaz ID Smart or Jade ID Smart). Update the mostWanted, hemat, and otherPlans arrays inside calculate() to use the correct indices based on currentTab. Specifically: For konvensional, the full set is available including Topaz ID Smart(12) and Jade ID Smart(14). For syariah, only plans 0-12 exist (Jade Smart at 12). The mostWanted section should show Jade ID(6), Jade(5), Topaz ID(4), Topaz(3). The hemat section should show Jade Smart (idx 13 for konv, 12 for syariah), Topaz Smart(11), and add Jade ID Smart(14, konv only) and Topaz ID Smart(12, konv only). The otherPlans should include Diamond(0), Ruby(1), Emerald(2), Sapphire(7), Diamond Smart(8), Ruby Smart(9), Emerald Smart(10).",
+    "Step 6: Add download buttons for both PDF files. Add a new section between the tabs and the controls div (or after the info-box) with two styled buttons: one for 'Download Tabel Premi Konvensional' linking to https://raw.githubusercontent.com/petrusjakub/Project_miuhc/main/B.%20Tabel%20Premi%20Miuhc%20Versi%20Quick%20PDF%20Per%20Sep%202025%20(3).pdf and one for 'Download Tabel Premi Syariah' linking to https://raw.githubusercontent.com/petrusjakub/Project_miuhc/main/B.%20Tabel%20Premi%20Syariah%202024%20-%20Miuhc%20Versi%20Quick%20PDF%20(1).pdf. Style them with the existing green theme, use download attribute, and add PDF icons or appropriate visual indicators."
+  ],
+  "acceptance_criteria": [
+    "DATA_KONV contains 15 values per age per gender matching konv_15plan_data.json exactly",
+    "DATA_SYARIAH remains unchanged with 13 values per age per gender matching syariah_13plan_data.json",
+    "PLAN_NAMES array has 15 entries including Topaz ID Smart and Jade ID Smart",
+    "PLAN_DETAILS includes entries for Topaz ID Smart and Jade ID Smart",
+    "The calculate() function correctly handles both 15-plan (konv) and 13-plan (syariah) data",
+    "Two download buttons are visible linking to the correct raw GitHub URLs for both PDFs",
+    "The HTML file is valid and renders correctly"
+  ],
+  "verification": [
+    "Open Index.html and verify konvensional tab shows all 15 plans including Topaz ID Smart and Jade ID Smart",
+    "Switch to syariah tab and verify it shows 13 plans (without Topaz ID Smart and Jade ID Smart)",
+    "Verify download buttons are present and link to correct URLs",
+    "Run basic JSON validation on the DATA_KONV and DATA_SYARIAH objects to confirm they parse correctly"
+  ],
+  "blocked_reason": null,
+  "findings": "All changes applied to Index.html. DATA_KONV updated to 15 values per age matching konv_15plan_data.json. DATA_SYARIAH unchanged with 13 values. calculate() now conditionally renders 4 hemat plans for konvensional (Jade ID Smart idx 14, Jade Smart idx 13, Topaz ID Smart idx 12, Topaz Smart idx 11) and 2 for syariah (Jade Smart idx 12, Topaz Smart idx 11). PDF download buttons added between info-box and footer."
+}
