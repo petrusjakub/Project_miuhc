@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "fix",
   "description": "Extract Rawat Jalan and Rawat Gigi premium data from Excel files, fix calcPremi() formula, add benefit type selector, and update download links in Index.html",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Step 1: Write a Python extraction script (extract_data.py) that reads both Excel files using zipfile+xml.etree.ElementTree (NOT openpyxl - it's not available). The xlsx files use inlineStr format (not shared strings). Parse xl/worksheets/sheet1.xml from each ZIP. Structure: columns are [Jenis Kelamin, Usia, Kategori Manfaat, Tipe Plan, Diamond, Ruby, Emerald, Topaz, Topaz ID, Jade, Jade ID, Sapphire]. Categories: 'Kamar' (rawat inap), 'Rawat Jalan', 'Rawat Gigi'. Tipe Plan: 'Normal' or 'Smart'.",
     "Step 2: From Data_Premi_Lengkap.xlsx (Konvensional): extract Rawat Jalan data for all ages found in the Excel (labeled as 'Pria' ages 0-85). The data for ages 80-85 is corrupted (shows Kamar values instead of RJ values) - use age 79 values for ages 80-85 instead. Build object DATA_KONV_RJ with same structure as DATA_KONV: {PRIA: {age: [8 Normal + 7 Smart values]}, WANITA: {age: [same values - use PRIA data for both]}}. Smart has 7 values for konv (last Sapphire Smart is always empty so only 7). IMPORTANT: The Excel only has 8 columns for Normal and 7 for Smart (Sapphire Smart is always empty/missing).",
@@ -36,5 +36,5 @@
     "Run: python3 -c to parse the final HTML and verify DATA_SYARIAH PRIA 45 index 4 = 15576400 and the calcPremi function does not contain 1.12"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All changes verified: calcPremi no longer multiplies by 1.12, DATA_SYARIAH PRIA age 45 Topaz ID (index 4) = 15576400, benefit type selector works with gigi visibility toggle for syariah only, download links point to brosur PDFs. The extraction script (extract_data.py) is included in the repo for reference. Ages 80-85 use age 79 data for RJ/Gigi as specified."
 }
