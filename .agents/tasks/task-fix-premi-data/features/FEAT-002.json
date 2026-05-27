@@ -1,0 +1,23 @@
+{
+  "id": "FEAT-002",
+  "type": "fix",
+  "description": "Fix card UI to show correct benefit label and add guard for konvensional+gigi combination",
+  "status": "in_progress",
+  "steps": [
+    "Step 1: Add a 4th parameter 'benefitLabel' to buildCard() and replace the hardcoded 'Rawat Inap' text with the parameter value.",
+    "Step 2: Update all calls to buildCard() in calculate() to pass the current benefit label derived from the benefitType selector.",
+    "Step 3: Add an early guard in calculate() so that if currentTab is 'konvensional' and benefit is 'gigi', the code resets benefitType to 'inap' and returns early or uses DATA_KONV."
+  ],
+  "acceptance_criteria": [
+    "When Rawat Jalan is selected, plan cards show 'Rawat Jalan' instead of 'Rawat Inap'",
+    "When Rawat Gigi is selected, plan cards show 'Rawat Gigi' instead of 'Rawat Inap'",
+    "If konvensional+gigi somehow gets triggered, it falls back to inap safely"
+  ],
+  "verification": [
+    "Grep Index.html for buildCard calls to confirm benefitLabel is passed",
+    "Grep for the guard clause in calculate()",
+    "Confirm no hardcoded 'Rawat Inap' in buildCard body"
+  ],
+  "blocked_reason": null,
+  "findings": null
+}

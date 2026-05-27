@@ -575,7 +575,7 @@ window.toggleAllPlans = function() {
     }
 };
 
-function buildCard(planName, rs, isSmart) {
+function buildCard(planName, rs, isSmart, benefitLabel) {
     var premi = calcPremi(rs);
     var details = PLAN_DETAILS[planName];
     var deductibleHtml = '';
@@ -586,6 +586,7 @@ function buildCard(planName, rs, isSmart) {
     var kamar = details ? escapeHtml(details.kamar) : '-';
     var limit = details ? escapeHtml(details.limit) : '-';
     var safeName = escapeHtml(planName);
+    var safeBenefitLabel = escapeHtml(benefitLabel || 'Rawat Inap');
     return '<div class="plan-card' + (isSmart ? ' smart' : '') + '">' +
         '<div class="card-header">' + safeName + '</div>' +
         '<div class="card-body">' +
@@ -595,7 +596,7 @@ function buildCard(planName, rs, isSmart) {
             '<div class="detail-row"><span>Kamar</span><span class="detail-val">' + kamar + '</span></div>' +
             '<div class="detail-row"><span>Limit Kartu</span><span class="detail-val">' + limit + '</span></div>' +
             '<div class="detail-row"><span>Asuransi Jiwa</span><span class="detail-val">30 Juta</span></div>' +
-            '<div class="detail-row"><span>Rawat Inap</span><span class="detail-val">Sesuai Tagihan</span></div>' +
+            '<div class="detail-row"><span>' + safeBenefitLabel + '</span><span class="detail-val">Sesuai Tagihan</span></div>' +
             deductibleHtml +
         '</div>' +
     '</div>';
@@ -603,6 +604,17 @@ function buildCard(planName, rs, isSmart) {
 
 window.calculate = function() {
     var benefit = document.getElementById('benefitType').value;
+
+    // Guard: konvensional + gigi is not a valid combination
+    if (currentTab === 'konvensional' && benefit === 'gigi') {
+        document.getElementById('benefitType').value = 'inap';
+        benefit = 'inap';
+    }
+
+    var benefitLabel = 'Rawat Inap';
+    if (benefit === 'jalan') benefitLabel = 'Rawat Jalan';
+    else if (benefit === 'gigi') benefitLabel = 'Rawat Gigi';
+
     var data;
     if (currentTab === 'konvensional') {
         data = benefit === 'jalan' ? DATA_KONV_RJ : DATA_KONV;
@@ -649,7 +661,7 @@ window.calculate = function() {
     html += '<div class="section-title">Most Wanted <span class="badge">No Deductible</span></div>';
     html += '<div class="cards-grid">';
     for (var i = 0; i < mostWanted.length; i++) {
-        html += buildCard(mostWanted[i].name, row[mostWanted[i].idx], false);
+        html += buildCard(mostWanted[i].name, row[mostWanted[i].idx], false, benefitLabel);
     }
     html += '</div>';
 
@@ -657,7 +669,7 @@ window.calculate = function() {
     html += '<div class="section-title">HEMAT 40% <span class="badge" style="background:#F39C12">Smart Plan</span></div>';
     html += '<div class="cards-grid">';
     for (var j = 0; j < hemat.length; j++) {
-        html += buildCard(hemat[j].name, row[hemat[j].idx], true);
+        html += buildCard(hemat[j].name, row[hemat[j].idx], true, benefitLabel);
     }
     html += '</div>';
 
@@ -680,7 +692,7 @@ window.calculate = function() {
     for (var k = 0; k < otherPlans.length; k++) {
         var name = otherPlans[k].name;
         var isSmart = name.toLowerCase().indexOf('smart') >= 0;
-        html += buildCard(name, row[otherPlans[k].idx], isSmart);
+        html += buildCard(name, row[otherPlans[k].idx], isSmart, benefitLabel);
     }
     html += '</div></div>';
 
