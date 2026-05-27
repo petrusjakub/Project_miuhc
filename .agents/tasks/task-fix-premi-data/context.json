@@ -1,0 +1,20 @@
+{
+  "project_type": "Static HTML page - premium calculator for MiUHC insurance product",
+  "language": "HTML/JavaScript (single file app with embedded data)",
+  "build_system": "None - single static HTML file served from GitHub Pages",
+  "test_framework": "None - manual verification by checking displayed values",
+  "build_command": "N/A - static HTML",
+  "test_command": "python3 script to verify data extraction matches expected values",
+  "verification_instructions": "1. Extract data from Excel, 2. Verify Syariah Pria age 45 Topaz ID = 15,576,400 and Topaz = 18,594,700 display correctly as Premi Tahunan (no *1.12), 3. Verify RJ and Gigi options appear",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "No setup needed. Python3 with zipfile and xml.etree.ElementTree (both built-in) are available for Excel parsing. openpyxl/pandas are NOT available (network restricted).",
+  "environment_constraints": "INTEGRATIONS_ONLY network - cannot install pip packages. Must use Python built-in zipfile + xml.etree.ElementTree to parse xlsx files. No openpyxl, no pandas.",
+  "contribution_requirements": "Single HTML file with all CSS/JS/data embedded inline",
+  "key_patterns": "Data is stored as JavaScript objects DATA_KONV and DATA_SYARIAH with structure {PRIA: {age: [values...]}, WANITA: {age: [values...]}}. Each age array has plan values: [Diamond, Ruby, Emerald, Topaz, Topaz ID, Jade, Jade ID, Sapphire, Diamond Smart, Ruby Smart, Emerald Smart, Topaz Smart, ...]. Konvensional has 15 values (8 normal + 7 smart including Topaz ID Smart and Jade ID Smart). Syariah has 13 values (8 normal + 5 smart, no Topaz ID Smart or Jade ID Smart). calcPremi() function computes display values. buildCard() renders plan cards. calculate() is the main render function.",
+  "relevant_files": [
+    "Index.html",
+    "Data_Premi_Lengkap.xlsx",
+    "Data_Premi_Syariah_Lengkap.xlsx"
+  ],
+  "directory_structure": "Flat structure - all files in root. Index.html is the app. Excel files are data sources. PDF files are downloadable brochures."
+}
