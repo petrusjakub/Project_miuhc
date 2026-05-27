@@ -1,0 +1,21 @@
+{
+  "project_type": "Single-page HTML calculator with embedded JavaScript premium data",
+  "language": "HTML/JavaScript",
+  "build_system": "None - static HTML file",
+  "test_framework": "None - manual validation",
+  "build_command": "N/A - static file, validate with: python3 -c \"import re,json; html=open('/projects/sandbox/Project_miuhc/Index.html').read(); print('HTML length:', len(html)); assert 'DATA_KONV' in html; assert 'DATA_SYARIAH' in html; assert 'DATA_KONV_RJ' in html; assert 'DATA_SYARIAH_RJ' in html; assert 'DATA_SYARIAH_GIGI' in html; print('All data objects present')\"",
+  "test_command": "python3 -c \"import re,json; html=open('/projects/sandbox/Project_miuhc/Index.html').read(); m=re.search(r'const DATA_SYARIAH_RJ = ({.*?});',html); d=json.loads(m.group(1)); assert d['PRIA']['45']==[7227600,7227600,6502400,6502400,6502400,6502400,6502400,6502400,7227600,7227600,6502400,6502400,6502400]; print('Syariah RJ age 45 verified'); m2=re.search(r'const DATA_SYARIAH = ({.*?});',html); d2=json.loads(m2.group(1)); assert d2['PRIA']['45'][3]==18594700; assert d2['PRIA']['45'][4]==15576400; print('Syariah RS age 45 Topaz/TopazID verified'); print('ALL TESTS PASS')\"",
+  "verification_instructions": "1. Validate the HTML file parses correctly, 2. Verify DATA_SYARIAH PRIA age 45 Topaz=18594700 and Topaz ID=15576400, 3. Verify all new data objects exist and have correct structure, 4. Verify download buttons have correct brosur URLs, 5. Verify benefit type selector exists",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "No setup needed - single HTML file with extracted JSON data files for reference",
+  "environment_constraints": "INTEGRATIONS_ONLY network - cannot install packages. PDF data has been pre-extracted to JSON files in the project root: konv_rj_data.json (15 plans per age, ages 0-79), syariah_rj_data.json (13 plans per age, ages 0-79), syariah_gigi_data.json (13 plans per age, ages 0-79).",
+  "contribution_requirements": "Single HTML file project - all changes go to Index.html",
+  "key_patterns": "Premium data stored as JS objects with structure {GENDER: {AGE: [plan_values_array]}}. Konvensional has 15 plans per age. Syariah has 13 plans per age. Calculation: Premi Tahunan = RS Premi * 1.12 (rounded to 100), Premi Bulanan = Tahunan * 1.14 / 12 (rounded to 100). Plan order Konv: [Diamond,Ruby,Emerald,Topaz,Topaz ID,Jade,Jade ID,Sapphire,Diamond Smart,Ruby Smart,Emerald Smart,Topaz Smart,Topaz ID Smart,Jade Smart,Jade ID Smart]. Plan order Syariah: [Diamond,Ruby,Emerald,Topaz,Topaz ID,Jade,Jade ID,Sapphire,Diamond Smart,Ruby Smart,Emerald Smart,Topaz Smart,Jade Smart].",
+  "relevant_files": [
+    "Index.html",
+    "konv_rj_data.json",
+    "syariah_rj_data.json",
+    "syariah_gigi_data.json"
+  ],
+  "directory_structure": "Root contains Index.html (main app), PDF files for reference, and extracted JSON data files for Rawat Jalan and Rawat Gigi premiums"
+}

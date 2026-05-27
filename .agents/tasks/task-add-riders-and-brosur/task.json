@@ -1,0 +1,7 @@
+{
+  "task_id": "task-add-riders-and-brosur",
+  "task_description": "Add benefit type selector (Rawat Inap/Rawat Jalan/Rawat Gigi) to MiUHC calculator, embed extracted premium data for additional riders, and change download buttons to Brosur buttons with correct PDF URLs.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}

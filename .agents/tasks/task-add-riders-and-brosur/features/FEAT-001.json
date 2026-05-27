@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Add benefit type selector (Rawat Inap/Rawat Jalan/Rawat Gigi), add Rawat Jalan and Rawat Gigi premium data, and change download buttons from 'Tabel Premi' to 'Brosur MIUHC' with correct URLs.",
+  "status": "in_progress",
+  "steps": [
+    "Step 1: Add new data objects to Index.html. Read the JSON files and embed them as JavaScript constants: (a) DATA_KONV_RJ from /projects/sandbox/Project_miuhc/konv_rj_data.json - 15 values per age, ages 0-79 only for PRIA and WANITA. (b) DATA_SYARIAH_RJ from /projects/sandbox/Project_miuhc/syariah_rj_data.json - 13 values per age, ages 0-79 only. (c) DATA_SYARIAH_GIGI from /projects/sandbox/Project_miuhc/syariah_gigi_data.json - 13 values per age, ages 0-79 only. Place these constants right after DATA_SYARIAH in the script section.",
+    "Step 2: Add a benefit type selector UI. Add a new control group in the .controls div with a <select> element with id='benefitType' and onchange='calculate()'. Options: 'rawat_inap' (label: 'Manfaat Perawatan Rumah Sakit'), 'rawat_jalan' (label: 'Manfaat Rawat Jalan'), 'rawat_gigi' (label: 'Manfaat Perawatan Gigi'). The 'rawat_gigi' option should only be shown/enabled when the syariah tab is active (not available for konvensional).",
+    "Step 3: Update the calculate() function to use the selected benefit type. When benefit type is 'rawat_inap', use DATA_KONV or DATA_SYARIAH (current behavior). When 'rawat_jalan', use DATA_KONV_RJ or DATA_SYARIAH_RJ. When 'rawat_gigi' (syariah only), use DATA_SYARIAH_GIGI. If the selected age is >= 80 and benefit type is 'rawat_jalan' or 'rawat_gigi', show a message like 'Data tidak tersedia untuk usia ini' since RJ/GIGI data only exists for ages 0-79. Also update the switchTab function to: if switching to konvensional and benefit type is rawat_gigi, reset it to rawat_inap.",
+    "Step 4: Change the download buttons. Replace the current two 'Download Tabel Premi' buttons with two 'Download Brosur' buttons: (a) 'Download Brosur MIUHC Konvensional (PDF)' linking to https://raw.githubusercontent.com/petrusjakub/Project_miuhc/main/Brosur%20MiUltimate%20Health%20Care%20(MiUHC).pdf (b) 'Download Brosur MIUHC Syariah (PDF)' linking to https://raw.githubusercontent.com/petrusjakub/Project_miuhc/main/B.%20Tabel%20Premi%20Syariah%202024%20-%20Miuhc%20Versi%20Quick%20PDF%20(1).pdf. Keep the same styling (green gradient buttons with download icons).",
+    "Step 5: Update the info-box or footer to mention that Rawat Jalan and Rawat Gigi are additional rider benefits (Manfaat Tambahan) and that Rawat Gigi is only available for Syariah. Also update the Rawat Inap detail row in buildCard to reflect the current benefit type name if desired."
+  ],
+  "acceptance_criteria": [
+    "DATA_KONV_RJ, DATA_SYARIAH_RJ, DATA_SYARIAH_GIGI constants exist in the HTML with correct data from the JSON files",
+    "Benefit type selector is visible with 3 options (Rawat Inap, Rawat Jalan, Rawat Gigi)",
+    "Selecting Rawat Jalan shows different premium values from the RJ data",
+    "Rawat Gigi option is only available/enabled when Syariah tab is active",
+    "Ages 80-85 show appropriate message when RJ or GIGI benefit is selected",
+    "Download buttons say 'Brosur MIUHC Konvensional' and 'Brosur MIUHC Syariah' with correct URLs",
+    "DATA_SYARIAH PRIA age 45 index 3 (Topaz) = 18594700 and index 4 (Topaz ID) = 15576400 (unchanged from current correct data)",
+    "HTML file renders correctly and calculate() works for all combinations"
+  ],
+  "verification": [
+    "Run: python3 -c \"import re,json; html=open('/projects/sandbox/Project_miuhc/Index.html').read(); m=re.search(r'const DATA_SYARIAH_RJ = ({.*?});',html); d=json.loads(m.group(1)); assert d['PRIA']['45']==[7227600,7227600,6502400,6502400,6502400,6502400,6502400,6502400,7227600,7227600,6502400,6502400,6502400]; print('RJ data OK')\"",
+    "Run: python3 -c \"import re,json; html=open('/projects/sandbox/Project_miuhc/Index.html').read(); m=re.search(r'const DATA_SYARIAH = ({.*?});',html); d=json.loads(m.group(1)); assert d['PRIA']['45'][3]==18594700 and d['PRIA']['45'][4]==15576400; print('RS verification OK')\"",
+    "Run: python3 -c \"import re; html=open('/projects/sandbox/Project_miuhc/Index.html').read(); assert 'Brosur MIUHC Konvensional' in html or 'Brosur MiUHC Konvensional' in html; assert 'Brosur%20MiUltimate%20Health%20Care' in html; print('Brosur buttons OK')\"",
+    "Run: python3 -c \"import re; html=open('/projects/sandbox/Project_miuhc/Index.html').read(); assert 'benefitType' in html; assert 'rawat_jalan' in html; assert 'rawat_gigi' in html; assert 'DATA_KONV_RJ' in html; assert 'DATA_SYARIAH_GIGI' in html; print('Benefit selector OK')\""
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
