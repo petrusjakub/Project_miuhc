@@ -1,7 +1,14 @@
 {
   "task_id": "task-fix-premi-data",
   "task_description": "Fix premium calculator: correct calcPremi formula (remove *1.12 multiplier), add Rawat Jalan and Rawat Gigi benefit options with data extracted from Excel source files, make Rawat Gigi only available for Syariah, and fix download links to brosur PDFs.",
-  "status": "in_progress",
-  "feature_order": ["FEAT-001"],
-  "blocked_reason": null
+  "status": "completed",
+  "feature_order": ["FEAT-001", "FEAT-002"],
+  "blocked_reason": null,
+  "verification": {
+    "build": "pass",
+    "tests": "pass",
+    "test_quality": "pass",
+    "docker_build": "skipped",
+    "summary": "All verification tests pass: calcPremi no longer multiplies by 1.12, DATA_SYARIAH PRIA 45 Topaz ID = 15576400 displays correctly, DATA_KONV_RJ/DATA_SYARIAH_RJ/DATA_SYARIAH_GIGI all present with correct Excel-derived values, benefit type selector added with Rawat Gigi only for Syariah, download links updated, footer corrected."
+  }
 }
