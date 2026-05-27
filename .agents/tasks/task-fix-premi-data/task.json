@@ -1,0 +1,7 @@
+{
+  "task_id": "task-fix-premi-data",
+  "task_description": "Fix premium calculator: correct calcPremi formula (remove *1.12 multiplier), add Rawat Jalan and Rawat Gigi benefit options with data extracted from Excel source files, make Rawat Gigi only available for Syariah, and fix download links to brosur PDFs.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}

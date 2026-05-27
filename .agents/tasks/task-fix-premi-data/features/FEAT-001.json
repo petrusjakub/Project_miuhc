@@ -1,31 +1,40 @@
 {
   "id": "FEAT-001",
   "type": "fix",
-  "description": "Update premium data in Index.html to include all plans from PDF sources and add PDF download buttons. The Konvensional PDF has 15 plans (8 non-smart + 7 smart including Topaz ID Smart and Jade ID Smart), while the current HTML only has 13 (missing Topaz ID Smart and Jade ID Smart). The Syariah PDF correctly has 13 plans. Also add download buttons for both PDF files.",
-  "status": "completed",
+  "description": "Extract Rawat Jalan and Rawat Gigi premium data from Excel files, fix calcPremi() formula, add benefit type selector, and update download links in Index.html",
+  "status": "in_progress",
   "steps": [
-    "Step 1: Update DATA_KONV in Index.html. Read /projects/sandbox/Project_miuhc/konv_15plan_data.json which contains the full 15-plan-per-age data extracted from the Konvensional PDF. Replace the existing DATA_KONV JavaScript object in Index.html (line 501) with this new 15-value array data. Plan order per age array: [Diamond(0), Ruby(1), Emerald(2), Topaz(3), Topaz ID(4), Jade(5), Jade ID(6), Sapphire(7), Diamond Smart(8), Ruby Smart(9), Emerald Smart(10), Topaz Smart(11), Topaz ID Smart(12), Jade Smart(13), Jade ID Smart(14)].",
-    "Step 2: Keep DATA_SYARIAH as-is. Read /projects/sandbox/Project_miuhc/syariah_13plan_data.json to verify. The Syariah data correctly has 13 plans per age (8 non-smart + 5 smart). No changes needed. Plan order: [Diamond(0), Ruby(1), Emerald(2), Topaz(3), Topaz ID(4), Jade(5), Jade ID(6), Sapphire(7), Diamond Smart(8), Ruby Smart(9), Emerald Smart(10), Topaz Smart(11), Jade Smart(12)].",
-    "Step 3: Update the PLAN_NAMES array to include the 2 new plans: change from 13 to 15 entries by adding 'Topaz ID Smart' at index 12 and 'Jade ID Smart' at index 14. New array: ['Diamond','Ruby','Emerald','Topaz','Topaz ID','Jade','Jade ID','Sapphire','Diamond Smart','Ruby Smart','Emerald Smart','Topaz Smart','Topaz ID Smart','Jade Smart','Jade ID Smart'].",
-    "Step 4: Update the PLAN_DETAILS object to add entries for the 2 new plans. 'Topaz ID Smart' should have: wilayah='Indonesia', kamar='1 Bed', limit='18 M', deductible='Rp8.000.000'. 'Jade ID Smart' should have: wilayah='Indonesia', kamar='2 Bed', limit='10 M', deductible='Rp5.000.000'.",
-    "Step 5: Update the calculate() function to handle the different array lengths between Konvensional (15 plans) and Syariah (13 plans). The plan index mapping differs: For Konvensional, Topaz ID Smart is at index 12, Jade Smart at 13, Jade ID Smart at 14. For Syariah, Jade Smart remains at index 12 (no Topaz ID Smart or Jade ID Smart). Update the mostWanted, hemat, and otherPlans arrays inside calculate() to use the correct indices based on currentTab. Specifically: For konvensional, the full set is available including Topaz ID Smart(12) and Jade ID Smart(14). For syariah, only plans 0-12 exist (Jade Smart at 12). The mostWanted section should show Jade ID(6), Jade(5), Topaz ID(4), Topaz(3). The hemat section should show Jade Smart (idx 13 for konv, 12 for syariah), Topaz Smart(11), and add Jade ID Smart(14, konv only) and Topaz ID Smart(12, konv only). The otherPlans should include Diamond(0), Ruby(1), Emerald(2), Sapphire(7), Diamond Smart(8), Ruby Smart(9), Emerald Smart(10).",
-    "Step 6: Add download buttons for both PDF files. Add a new section between the tabs and the controls div (or after the info-box) with two styled buttons: one for 'Download Tabel Premi Konvensional' linking to https://raw.githubusercontent.com/petrusjakub/Project_miuhc/main/B.%20Tabel%20Premi%20Miuhc%20Versi%20Quick%20PDF%20Per%20Sep%202025%20(3).pdf and one for 'Download Tabel Premi Syariah' linking to https://raw.githubusercontent.com/petrusjakub/Project_miuhc/main/B.%20Tabel%20Premi%20Syariah%202024%20-%20Miuhc%20Versi%20Quick%20PDF%20(1).pdf. Style them with the existing green theme, use download attribute, and add PDF icons or appropriate visual indicators."
+    "Step 1: Write a Python extraction script (extract_data.py) that reads both Excel files using zipfile+xml.etree.ElementTree (NOT openpyxl - it's not available). The xlsx files use inlineStr format (not shared strings). Parse xl/worksheets/sheet1.xml from each ZIP. Structure: columns are [Jenis Kelamin, Usia, Kategori Manfaat, Tipe Plan, Diamond, Ruby, Emerald, Topaz, Topaz ID, Jade, Jade ID, Sapphire]. Categories: 'Kamar' (rawat inap), 'Rawat Jalan', 'Rawat Gigi'. Tipe Plan: 'Normal' or 'Smart'.",
+    "Step 2: From Data_Premi_Lengkap.xlsx (Konvensional): extract Rawat Jalan data for all ages found in the Excel (labeled as 'Pria' ages 0-85). The data for ages 80-85 is corrupted (shows Kamar values instead of RJ values) - use age 79 values for ages 80-85 instead. Build object DATA_KONV_RJ with same structure as DATA_KONV: {PRIA: {age: [8 Normal + 7 Smart values]}, WANITA: {age: [same values - use PRIA data for both]}}. Smart has 7 values for konv (last Sapphire Smart is always empty so only 7). IMPORTANT: The Excel only has 8 columns for Normal and 7 for Smart (Sapphire Smart is always empty/missing).",
+    "Step 3: From Data_Premi_Syariah_Lengkap.xlsx (Syariah): extract Rawat Jalan data. The file has 'Wanita' ages 0-79 (this IS the correct WANITA data). Also has 'Pria' age 0 only. For ages not in Excel (1-79 for Pria, 80-85 for both), use the corresponding available data (i.e., use Wanita data for Pria since RJ rates are typically unisex in this product). Build DATA_SYARIAH_RJ with structure {PRIA: {age: [8 Normal + 5 Smart]}, WANITA: {age: [8 Normal + 5 Smart]}}. Syariah Smart only has 5 values (Diamond, Ruby, Emerald, Topaz, Jade - no Topaz ID Smart, Jade ID Smart, or Sapphire Smart).",
+    "Step 4: From Data_Premi_Syariah_Lengkap.xlsx: extract Rawat Gigi data. Same structure as step 3. Build DATA_SYARIAH_GIGI with same structure. Rawat Gigi ONLY exists for Syariah (not in Konvensional Excel).",
+    "Step 5: Run the extraction script and output the JavaScript object literals for DATA_KONV_RJ, DATA_SYARIAH_RJ, and DATA_SYARIAH_GIGI.",
+    "Step 6: In Index.html, add the three new data objects (DATA_KONV_RJ, DATA_SYARIAH_RJ, DATA_SYARIAH_GIGI) after the existing DATA_SYARIAH object in the <script> section.",
+    "Step 7: Fix calcPremi() function - change from 'var tahunan = Math.round(rs * 1.12 / 100) * 100' to 'var tahunan = rs' (the Excel values ARE the final annual premiums). Keep bulanan formula as: var bulanan = Math.round(tahunan * 1.14 / 12 / 100) * 100 (this seems intentional for monthly installment surcharge).",
+    "Step 8: Add a 'Jenis Manfaat' (benefit type) dropdown selector in the .controls div, with options: 'Rawat Inap' (default), 'Rawat Jalan', 'Rawat Gigi'. Give it id='benefitType'.",
+    "Step 9: Update the calculate() function to select the correct data object based on current tab AND benefit type: if konvensional+rawat_inap -> DATA_KONV, if konvensional+rawat_jalan -> DATA_KONV_RJ, if syariah+rawat_inap -> DATA_SYARIAH, if syariah+rawat_jalan -> DATA_SYARIAH_RJ, if syariah+rawat_gigi -> DATA_SYARIAH_GIGI.",
+    "Step 10: Make the 'Rawat Gigi' option in the benefit type dropdown only visible/enabled when the Syariah tab is selected. In switchTab(), if switching to konvensional and current benefit is 'gigi', reset to 'rawat_inap'. Also hide/disable the gigi option when konvensional is active.",
+    "Step 11: Handle edge case: when benefit type is RJ or Gigi and age > 79 (data only goes to 79 for syariah, and konv RJ ages 80-85 are capped at age 79 values), show appropriate message or the capped values.",
+    "Step 12: Update the download buttons to link to the actual brosur files in the repository: Konvensional link -> 'Brosur MIUHC Konvensional.pdf' (use relative path or raw GitHub URL), Syariah link -> 'Brosur MIUHC Syariah.pdf'. Change the button text to reflect 'Download Brosur' instead of 'Download Tabel Premi'.",
+    "Step 13: Update the footer text to remove the incorrect formula description 'Premi Tahunan = RS Premi x 1.12'. Replace with accurate description: 'Premi Tahunan = sesuai tabel premi (sudah termasuk biaya admin)' and keep 'Premi Bulanan = Premi Tahunan x 1.14 / 12 (dibulatkan ke ratusan terdekat)'.",
+    "Step 14: Verify by checking that Syariah Pria age 45 Topaz ID displays 'Rp15.576.400' as Premi Tahunan (not Rp17.445.568 or Rp17.445.600). The value 15576400 is at index 4 in the DATA_SYARIAH PRIA '45' array."
   ],
   "acceptance_criteria": [
-    "DATA_KONV contains 15 values per age per gender matching konv_15plan_data.json exactly",
-    "DATA_SYARIAH remains unchanged with 13 values per age per gender matching syariah_13plan_data.json",
-    "PLAN_NAMES array has 15 entries including Topaz ID Smart and Jade ID Smart",
-    "PLAN_DETAILS includes entries for Topaz ID Smart and Jade ID Smart",
-    "The calculate() function correctly handles both 15-plan (konv) and 13-plan (syariah) data",
-    "Two download buttons are visible linking to the correct raw GitHub URLs for both PDFs",
-    "The HTML file is valid and renders correctly"
+    "calcPremi() no longer multiplies by 1.12 - annual premium is displayed directly from data",
+    "Syariah Pria age 45 Topaz ID shows Premi Tahunan = Rp15.576.400",
+    "Syariah Pria age 45 Topaz shows Premi Tahunan = Rp18.594.700",
+    "Benefit type selector with 3 options (Rawat Inap, Rawat Jalan, Rawat Gigi) is visible",
+    "Rawat Gigi option is only available when Syariah tab is selected",
+    "Selecting Rawat Jalan shows different (typically lower) premium values than Rawat Inap",
+    "Download buttons link to correct brosur PDF files",
+    "All existing functionality (tab switching, age/gender selection, plan cards) continues to work"
   ],
   "verification": [
-    "Open Index.html and verify konvensional tab shows all 15 plans including Topaz ID Smart and Jade ID Smart",
-    "Switch to syariah tab and verify it shows 13 plans (without Topaz ID Smart and Jade ID Smart)",
-    "Verify download buttons are present and link to correct URLs",
-    "Run basic JSON validation on the DATA_KONV and DATA_SYARIAH objects to confirm they parse correctly"
+    "Open Index.html in browser and verify: select Syariah tab, Pria, age 45 -> Topaz ID card shows Rp15.576.400",
+    "Verify Rawat Jalan option works: select it and confirm different values appear",
+    "Verify Rawat Gigi only appears under Syariah tab",
+    "Run: python3 -c to parse the final HTML and verify DATA_SYARIAH PRIA 45 index 4 = 15576400 and the calcPremi function does not contain 1.12"
   ],
   "blocked_reason": null,
-  "findings": "All changes applied to Index.html. DATA_KONV updated to 15 values per age matching konv_15plan_data.json. DATA_SYARIAH unchanged with 13 values. calculate() now conditionally renders 4 hemat plans for konvensional (Jade ID Smart idx 14, Jade Smart idx 13, Topaz ID Smart idx 12, Topaz Smart idx 11) and 2 for syariah (Jade Smart idx 12, Topaz Smart idx 11). PDF download buttons added between info-box and footer."
+  "findings": ""
 }
